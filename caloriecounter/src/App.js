@@ -12,6 +12,7 @@ function app(initModel, update, view, node) {
     const updatedView = view(dispatch, model)
     const patches = diff(currentView, updatedView)
     rootNode = patch(rootNode, patches)
+    currentView = updatedView
   }
 }
 
