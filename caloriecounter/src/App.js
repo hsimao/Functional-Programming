@@ -1,6 +1,6 @@
 import { h, diff, patch } from 'virtual-dom'
 import createElement from 'virtual-dom/create-element'
-console.log('test')
+
 function app(initModel, update, view, node) {
   let model = initModel
   let currentView = view(dispatch, model)
