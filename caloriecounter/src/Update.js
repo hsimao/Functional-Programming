@@ -5,6 +5,7 @@ const MSGS = {
   MEAL_INPUT: 'MEAL_INPUT',
   CALORIES_INPUT: 'CALORIES_INPUT',
   SAVE_MEAL: 'SAVE_MEAL',
+  EDIT_MEAL: 'EDIT_MEAL',
 }
 
 export function showFormMsg(showForm) {
@@ -37,6 +38,13 @@ export function deleteMealMsg(id) {
   }
 }
 
+export function editMealMsg(editId) {
+  return {
+    type: MSGS.EDIT_MEAL,
+    editId,
+  }
+}
+
 function update(msg, model) {
   switch (msg.type) {
     case MSGS.SHOW_FORM: {
@@ -53,12 +61,29 @@ function update(msg, model) {
       return { ...model, calories }
     }
     case MSGS.SAVE_MEAL: {
-      return add(msg, model)
+      const { editId } = model
+      const updatedModel = editId !== null ? edit(msg, model) : add(msg, model)
+
+      return updatedModel
     }
     case MSGS.DELETE_MEAL: {
       const { id } = msg
       const meals = R.filter(meal => meal.id !== id, model.meals)
       return { ...model, meals }
+    }
+    case MSGS.EDIT_MEAL: {
+      const { editId } = msg
+      // 抓出當前選中的 meal 資料, 並顯示在表單編輯畫面
+      const meal = model.meals.find(meal => meal.id === editId)
+      const { description, calories } = meal
+
+      return {
+        ...model,
+        editId,
+        description,
+        calories,
+        showForm: true,
+      }
     }
   }
   return model
@@ -77,6 +102,23 @@ function add(msg, model) {
     description: '',
     calories: 0,
     showForm: false,
+  }
+}
+
+function edit(msg, model) {
+  const { description, calories, editId } = model
+  const meals = model.meals.map(meal => {
+    if (meal.id === editId) return { ...meal, description, calories }
+    return meal
+  })
+
+  return {
+    ...model,
+    meals,
+    description: '',
+    calories: 0,
+    showForm: false,
+    editId: null,
   }
 }
 

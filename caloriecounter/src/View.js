@@ -1,7 +1,7 @@
 import hh from 'hyperscript-helpers'
 import { h } from 'virtual-dom'
 import * as R from 'ramda'
-import { showFormMsg, mealInputMsg, caloriesInputMsg, saveMealMsg, deleteMealMsg } from './Update'
+import { showFormMsg, mealInputMsg, caloriesInputMsg, saveMealMsg, deleteMealMsg, editMealMsg } from './Update'
 
 const { pre, div, h1, button, form, label, input, table, thead, tbody, th, tr, td, i } = hh(h)
 
@@ -32,6 +32,10 @@ function mealRow(dispatch, className, meal) {
       i({
         className: 'ph1 fa fa-trash-o pointer',
         onclick: () => dispatch(deleteMealMsg(meal.id)),
+      }),
+      i({
+        className: 'ph1 fa fa-pencil-square-o pointer',
+        onclick: () => dispatch(editMealMsg(meal.id)),
       }),
     ]),
   ])
