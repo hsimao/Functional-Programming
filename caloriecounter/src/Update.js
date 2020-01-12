@@ -30,6 +30,13 @@ export function caloriesInputMsg(calories) {
 
 export const saveMealMsg = { type: MSGS.SAVE_MEAL }
 
+export function deleteMealMsg(id) {
+  return {
+    type: MSGS.DELETE_MEAL,
+    id,
+  }
+}
+
 function update(msg, model) {
   switch (msg.type) {
     case MSGS.SHOW_FORM: {
@@ -47,6 +54,11 @@ function update(msg, model) {
     }
     case MSGS.SAVE_MEAL: {
       return add(msg, model)
+    }
+    case MSGS.DELETE_MEAL: {
+      const { id } = msg
+      const meals = R.filter(meal => meal.id !== id, model.meals)
+      return { ...model, meals }
     }
   }
   return model
