@@ -1,8 +1,9 @@
 import hh from 'hyperscript-helpers'
 import { h } from 'virtual-dom'
+import * as R from 'ramda'
 import { showFormMsg, mealInputMsg, caloriesInputMsg, saveMealMsg } from './Update'
 
-const { pre, div, h1, button, form, label, input } = hh(h)
+const { pre, div, h1, button, form, label, input, table, thead, tbody, th, tr, td } = hh(h)
 
 function fieldSet(labelText, inputValue, oninput) {
   return div([
@@ -15,6 +16,45 @@ function fieldSet(labelText, inputValue, oninput) {
     }),
   ])
 }
+
+// == render table Start ==
+function cell(tag, className, value) {
+  return tag({ className }, value)
+}
+
+const tableHeader = thead([tr([cell(th, 'pa2 tl', 'Meal'), cell(th, 'pa2 tr', 'Calories'), cell(th, '', '')])])
+
+function mealRow(dispatch, className, meal) {
+  return tr({ className }, [
+    cell(td, 'pa2', meal.description),
+    cell(td, 'pa2 tr', meal.calories),
+    cell(td, 'pa2 tr', []),
+  ])
+}
+
+function totalRow(meals) {
+  const total = R.pipe(
+    R.map(meal => meal.calories),
+    R.sum
+  )(meals)
+
+  return tr({ className: 'bt b' }, [cell(td, 'pa2 tr', 'Total:'), cell(td, 'pa2 tr', total), cell(td, '', '')])
+}
+
+function mealsBody(dispatch, className, meals) {
+  // 使用 R.partial 在每個 row 列表虛擬 dom 的最左邊的兩個參數上添加 dispatch 事件與 className 名稱
+  const rows = R.map(R.partial(mealRow, [dispatch, 'stripe-dark']), meals)
+  const rowsWithTotal = [...rows, totalRow(meals)]
+  return tbody({ className }, rowsWithTotal)
+}
+
+function tableView(dispatch, meals) {
+  if (meals.length === 0) {
+    return div({ className: 'mv2 i black-50' }, 'No meals to displaty...')
+  }
+  return table({ className: 'mv2 w-100 collapse' }, [tableHeader, mealsBody(dispatch, '', meals)])
+}
+// == render table End ==
 
 function buttonSet(dispatch) {
   return div([
@@ -63,6 +103,7 @@ function view(dispatch, model) {
   return div({ className: 'mw6 center' }, [
     h1({ className: 'f2 pv2 bb' }, 'Calorie Counter'),
     formView(dispatch, model),
+    tableView(dispatch, model.meals),
     pre(JSON.stringify(model, null, 2)),
   ])
 }
