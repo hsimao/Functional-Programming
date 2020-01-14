@@ -3,6 +3,8 @@ import * as R from 'ramda'
 export const MSGS = {
   LEFT_VALUE_INPUT: 'LEFT_VALUE_INPUT',
   RIGHT_VALUE_INPUT: 'RIGHT_VALUE_INPUT',
+  LEFT_UNIT_CHANGED: 'LEFT_UNIT_CHANGED',
+  RIGHT_UNIT_CHANGED: 'RIGHT_UNIT_CHANGED',
 }
 
 export function leftValueInputMsg(leftValue) {
@@ -16,6 +18,20 @@ export function rightValueInputMsg(rightValue) {
   return {
     type: MSGS.RIGHT_VALUE_INPUT,
     rightValue,
+  }
+}
+
+export function leftUnitChangedMsg(leftUnit) {
+  return {
+    type: MSGS.LEFT_UNIT_CHANGED,
+    leftUnit,
+  }
+}
+
+export function rightUnitChangedMsg(rightUnit) {
+  return {
+    type: MSGS.RIGHT_UNIT_CHANGED,
+    rightUnit,
   }
 }
 
@@ -38,6 +54,14 @@ function update(msg, model) {
     }
     case MSGS.RIGHT_VALUE_INPUT: {
       return handleUpdateInput('rightValue', msg, model)
+    }
+    case MSGS.LEFT_UNIT_CHANGED: {
+      const { leftUnit } = msg
+      return { ...model, leftUnit }
+    }
+    case MSGS.RIGHT_UNIT_CHANGED: {
+      const { rightUnit } = msg
+      return { ...model, rightUnit }
     }
   }
   return model
